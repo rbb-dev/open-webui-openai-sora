@@ -840,12 +840,7 @@ class Pipe:
         if metadata:
             file_metadata.update(metadata)
         filename = f"generated-video-{uuid.uuid4().hex}.mp4"
-        try:
-            file_obj = open(file_path, "rb")
-        except Exception as exc:
-            logger.error(f"Failed to open video temp file for upload: {exc}")
-            raise
-        try:
+        with open(file_path, "rb") as file_obj:
             file_item = await run_in_threadpool(
                 upload_file,
                 request=__request__,
@@ -859,11 +854,6 @@ class Pipe:
                 user=user,
                 metadata=file_metadata,
             )
-        finally:
-            try:
-                file_obj.close()
-            except Exception:
-                pass
         return __request__.app.url_path_for("get_file_content_by_id", id=file_item.id)
     def _write_response_body_to_tempfile(self, response: Any) -> Tuple[str, int]:
         temp_file = tempfile.NamedTemporaryFile(delete=False)
