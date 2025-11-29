@@ -179,15 +179,13 @@ class ResolutionPolicy:
             filtered = sorted(
                 candidates,
                 key=lambda value: abs(
-                    (self._parse_resolution_dims(value) or (0, 0))[0]
-                    - (self._parse_resolution_dims(value) or (0, 0))[1]
+                    (dims := self._parse_resolution_dims(value) or (0, 0))[0] - dims[1]
                 ),
             )
         if filtered:
             return sorted(
                 filtered,
-                key=lambda value: (self._parse_resolution_dims(value) or (0, 0))[0]
-                * (self._parse_resolution_dims(value) or (0, 0))[1],
+                key=lambda value: (dims := self._parse_resolution_dims(value) or (0, 0))[0] * dims[1],
             )[-1]
         return None
 
