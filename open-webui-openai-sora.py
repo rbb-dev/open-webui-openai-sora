@@ -70,6 +70,11 @@ class ReferenceAssessment:
 class ResolutionPolicy:
     """Encapsulate all resolution parsing, selection, and reference-image checks."""
 
+    # Scoring weights for resolution similarity matching
+    RATIO_WEIGHT = 5.0
+    ORIENTATION_MISMATCH_PENALTY = 0.5
+    HINT_MISMATCH_PENALTY = 0.25
+
     def __init__(
         self,
         *,
@@ -213,12 +218,12 @@ class ResolutionPolicy:
             area = dims[0] * dims[1]
             ratio_diff = abs(ratio - target_ratio)
             area_diff = abs(area - target_area) / max(target_area, 1)
-            score = ratio_diff * 5 + area_diff
+            score = ratio_diff * self.RATIO_WEIGHT + area_diff
             cand_orientation = self._orientation_label(candidate)
             if cand_orientation != target_orientation:
-                score += 0.5
+                score += self.ORIENTATION_MISMATCH_PENALTY
             if orientation_hint and cand_orientation != orientation_hint:
-                score += 0.25
+                score += self.HINT_MISMATCH_PENALTY
             if best_score is None or score < best_score:
                 best_score = score
                 best_choice = candidate
