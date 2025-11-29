@@ -1470,7 +1470,7 @@ Guidelines:
         except Exception as exc:
             logger.error(f"Failed to load user {user_id}: {exc}")
             return None
-    async def _get_file_by_id(self, file_id: str):
+    async def _get_file_by_id(self, file_id: str) -> Optional[Any]:
         try:
             from open_webui.models.files import Files
             return await run_in_threadpool(Files.get_file_by_id, file_id)
