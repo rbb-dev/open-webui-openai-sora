@@ -813,7 +813,8 @@ class Pipe:
             return None
         max_bytes = getattr(self.valves, "MAX_REMOTE_MEDIA_BYTES", 50 * 1024 * 1024)
         if len(response.content) > max_bytes:
-            logger.error(f"Remote media {url} exceeds 50MB decoded size. Skipping.")
+            size_mb = max_bytes / (1024 * 1024)
+            logger.error(f"Remote media {url} exceeds {size_mb:.0f}MB decoded size. Skipping.")
             return None
         data = base64.b64encode(response.content).decode("utf-8")
         return {"mimeType": mime_type, "data": data}
