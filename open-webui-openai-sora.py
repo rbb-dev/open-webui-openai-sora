@@ -599,7 +599,8 @@ class Pipe:
                     continue
                 try:
                     chunk_str = chunk.decode("utf-8")
-                except Exception:
+                except Exception as exc:
+                    logger.debug(f"Failed to decode chunk as UTF-8: {exc}")
                     continue
                 for raw_line in chunk_str.splitlines():
                     line = raw_line.strip()
@@ -1309,7 +1310,8 @@ Guidelines:
             candidate = int(raw_seconds)
             if candidate > 0:
                 duration = candidate
-        except Exception:
+        except Exception as exc:
+            logger.debug(f"Failed to parse duration seconds '{raw_seconds}': {exc}")
             pass
         validated["duration_seconds"] = duration
         # video model selection
@@ -1325,7 +1327,8 @@ Guidelines:
         if seed is not None and getattr(self.valves, "ENABLE_SEED", False):
             try:
                 validated["seed"] = int(seed)
-            except Exception:
+            except Exception as exc:
+                logger.debug(f"Failed to parse seed value '{seed}': {exc}")
                 pass
         elif getattr(self.valves, "ENABLE_SEED", False) and self.valves.DEFAULT_SEED is not None:
             # use default seed only if configured
@@ -1340,7 +1343,8 @@ Guidelines:
                 if v > self.valves.MAX_VARIATIONS:
                     v = self.valves.MAX_VARIATIONS
                 validated["variations"] = v
-            except Exception:
+            except Exception as exc:
+                logger.debug(f"Failed to parse variations value '{variations}': {exc}")
                 pass
         # reuse flag
         reuse_previous_image = bool(params.get("reuse_previous_image", False))
@@ -1456,7 +1460,8 @@ Guidelines:
             if callable(method):
                 try:
                     return method()  # type: ignore[return-value]
-                except Exception:
+                except Exception as exc:
+                    logger.debug(f"Failed to call {attr}() on source object: {exc}")
                     continue
         return getattr(source, "__dict__", {}) or {}
     async def _get_user_by_id(self, user_id: str) -> Optional[UserModel]:
