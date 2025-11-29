@@ -1399,7 +1399,7 @@ Guidelines:
                     new_height = max(1, min(new_height, source_height))
                     top = max((source_height - new_height) // 2, 0)
                     working = working.crop((0, top, source_width, top + new_height))
-            resized = working.resize((target_width, target_height), Image.LANCZOS)
+            resized = working.resize((target_width, target_height), Image.Resampling.LANCZOS)
             buffer = io.BytesIO()
             resized.save(buffer, format="JPEG", quality=95)
             return buffer.getvalue()
