@@ -432,8 +432,10 @@ class Pipe:
         try:
             yield client
         finally:
-            with contextlib.suppress(Exception):
+            try:
                 await asyncio.to_thread(client.close)
+            except Exception as exc:
+                logger.debug(f"Error closing OpenAI client: {exc}")
 
     async def emit_status(
         self,
